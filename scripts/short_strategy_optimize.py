@@ -28,7 +28,7 @@ ALL_STRATEGIES = [
     "BB_SQUEEZE_LONG", "BB_BOUNCE_LONG", "EMA50_BOUNCE_LONG",
     "HIGHER_LOW_BREAK", "LOWER_HIGH_BREAK",
     "TREND_FOLLOW_SHORT", "MEAN_REVERSION_SHORT", "EMA_BOUNCE_SHORT",
-    "VWAP_RETAIL_SHORT", "RSI_DIVERGENCE_SHORT", "LOWER_HIGH_BREAK",
+    "VWAP_RETAIL_SHORT", "RSI_DIVERGENCE_SHORT",
     "EMA_COMPRESSION_BREAK", "STOCH_MR_SHORT", "WILLR_SHORT",
     "RANGE_BREAKOUT_SHORT"
 ]
@@ -103,10 +103,9 @@ def run_isolated_backtest(symbol, ohlcv, htf_ohlcv, strat_map):
             ts = open_trade.get("time_stop", 48)
 
             if bars_alive >= ts:
-                unrealized = (entry - close) / entry * 100
-                if unrealized < 0:
-                    pnl = unrealized
-                    result = "TIME_STOP"
+                # Time-Stop schliesst den Trade immer nach Ablauf der Frist
+                pnl = (entry - close) / entry * 100
+                result = "TIME_STOP"
 
             if not result:
                 if high >= sl:

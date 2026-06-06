@@ -85,10 +85,9 @@ def run_short_only_backtest(symbol, ohlcv, htf_ohlcv, allowed_short, base_cfg):
             ts_bear = cfg.get("time_stop_bearish", 48)
 
             if bars_alive >= ts_bear:
-                unrealized = (entry - close) / entry * 100
-                if unrealized < 0:
-                    pnl = unrealized
-                    result = "TIME_STOP"
+                # Time-Stop schliesst den Trade immer nach Ablauf der Frist
+                pnl = (entry - close) / entry * 100
+                result = "TIME_STOP"
 
             if not result:
                 if high >= sl:

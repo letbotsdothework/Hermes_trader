@@ -81,9 +81,9 @@ def run_isolated(symbol, ohlcv, htf_ohlcv, strat_name, direction):
             ts = 96 if direction == "LONG" else 48
 
             if bars_alive >= ts:
-                unrealized = (close - entry)/entry*100 if direction == "LONG" else (entry - close)/entry*100
-                if unrealized < 0:
-                    pnl = unrealized; result = "TIME_STOP"
+                # Time-Stop schliesst den Trade immer nach Ablauf der Frist
+                pnl = (close - entry)/entry*100 if direction == "LONG" else (entry - close)/entry*100
+                result = "TIME_STOP"
             if not result:
                 if direction == "LONG":
                     if low <= sl: result, pnl = "LOSS", (sl - entry)/entry*100

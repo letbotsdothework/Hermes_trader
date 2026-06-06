@@ -857,6 +857,11 @@ def analyze_pair(symbol, interval="HOUR_1", strat_map=None):
     def add_setup(name, direction, conf, cond=True):
         if not cond: return
         if name in avoid: return
+        # H1-Trend-Guard: LONG nur bei BULLISH, SHORT nur bei BEARISH
+        if trend != "BULLISH" and direction == "LONG":
+            return
+        if trend != "BEARISH" and direction == "SHORT":
+            return
         # Optional: Regime-allowed-Filter (nur wenn explizit gesetzt)
         if allowed_strategies and name not in allowed_strategies:
             return
@@ -1332,10 +1337,12 @@ def simulate_outcomes():
                 price_move = price - entry
             else:
                 price_move = entry - price
-            if price_move < 0 and sl_dist > 0:
+            if sl_dist > 0:
                 pnl = risk_pct * (price_move / sl_dist)
-                result = "TIME_STOP"
-                t["time_stop"] = True
+            else:
+                pnl = 0
+            result = "TIME_STOP"
+            t["time_stop_triggered"] = True  # separate Flag, original time_stop Stunden bleiben erhalten
 
         if not result:
             if direction == "LONG":

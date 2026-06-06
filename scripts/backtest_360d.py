@@ -214,10 +214,10 @@ def williams_r(highs, lows, closes, period=14):
 def swing_highs_lows(highs, lows, lookback=3):
     n = len(highs)
     swing_h, swing_l = [], []
-    for i in range(lookback, n - lookback):
-        if highs[i] >= max(highs[j] for j in range(i - lookback, i + lookback + 1) if j != i):
+    for i in range(lookback, n):
+        if highs[i] >= max(highs[j] for j in range(i - lookback, i + 1) if j != i):
             swing_h.append(i)
-        if lows[i] <= min(lows[j] for j in range(i - lookback, i + lookback + 1) if j != i):
+        if lows[i] <= min(lows[j] for j in range(i - lookback, i + 1) if j != i):
             swing_l.append(i)
     return swing_h, swing_l
 
@@ -806,12 +806,13 @@ def run_pair_backtest(symbol, ohlcv, htf_ohlcv, strat_map, cfg):
 
             if bars_alive >= time_stop_bars:
                 if direction == "LONG":
-                    unrealized = (close - entry) / entry * 100
+                    pnl = (close - entry) / entry * 100
                 else:
-                    unrealized = (entry - close) / entry * 100
-                if unrealized < 0:
-                    pnl = unrealized
-                    result = "TIME_STOP"
+                    pnl = (entry - close) / entry * 100
+                result = "TIME_STOP"
+                # Hinweis: Time-Stop schliesst den Trade immer nach Ablauf der Frist,
+                # unabhaengig davon ob er gerade im Plus oder Minus ist.
+                # Das verhindert, dass Gewinntrades unbegrenzt offen bleiben.
 
             if not result:
                 if direction == "LONG":

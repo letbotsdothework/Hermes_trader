@@ -193,7 +193,8 @@ def macd(closes, fast=12, slow=26, signal=9):
         for x in c[p:]: v.append(x*k + v[-1]*(1-k))
         return v
     ef, es = _e(closes, fast), _e(closes, slow)
-    ml = [f - s for f, s in zip(ef, es[-len(ef):])]
+    # Korrekt: Beide EMAs auf gleichen Zeitpunkt ausrichten (ab Bar slow-1)
+    ml = [f - s for f, s in zip(ef[slow - fast:], es)]
     sig = _e(ml, signal)
     hist = [m - s for m, s in zip(ml[-len(sig):], sig)]
     pad = len(closes) - len(ml)
@@ -1019,7 +1020,8 @@ def analyze_pair(symbol, interval="HOUR_1", strat_map=None):
             if j > 0 and bb_up[j] is not None and bb_low[j] is not None and bb_mid[j] is not None and bb_mid[j] > 0:
                 bb_width_hist.append((bb_up[j] - bb_low[j]) / bb_mid[j] * 100)
         if bb_width_hist and bb_width == min(bb_width_hist) and bb_width < 4.0:
-            if current["close"] < bb_mid[-1] and trend != "BEARISH":
+            # Validierung: Preis in unterer Hälfte + bullische Kerze (close > open)
+            if current["close"] < bb_mid[-1] and trend != "BEARISH" and current["close"] > current["open"]:
                 add_setup("BB_SQUEEZE_LONG", "LONG", 75)
 
     # Regime Confidence Boost
@@ -1073,15 +1075,13 @@ def analyze_pair(symbol, interval="HOUR_1", strat_map=None):
     
     for direction, group in direction_groups.items():
         if len(group) >= 2:
-            # Sortiere nach Confidence
+            # Sortiere nach Confidence — beste Strategie zuerst
             group.sort(key=lambda x: x["confidence"], reverse=True)
-            # Boost für alle außer dem besten
-            for i, s in enumerate(group):
-                if i == 0:
-                    continue  # Bestes bekommt keinen Extra-Boost
-                boost = min(15, (len(group) - 1) * 5)
-                s["confidence"] = min(100, s["confidence"] + boost)
-                log(f"{symbol}: {s['name']} Confluence-Boost +{boost} ({len(group)} {direction} Signals)")
+            # Boost nur für den BESTEN Signalgeber (mehrfache Bestätigung = höheres Vertrauen)
+            best_signal = group[0]
+            boost = min(15, (len(group) - 1) * 5)
+            best_signal["confidence"] = min(100, best_signal["confidence"] + boost)
+            log(f"{symbol}: {best_signal['name']} Confluence-Boost +{boost} ({len(group)} {direction} Signals)")
 
     if not setups:
         return None, f"Kein Setup (Regime={regime}, Trend={trend}, H4={htf_trend})"
@@ -1337,26 +1337,21 @@ def simulate_outcomes():
                 price_move = price - entry
             else:
                 price_move = entry - price
-            if sl_dist > 0:
-                pnl = risk_pct * (price_move / sl_dist)
-            else:
-                pnl = 0
+            pnl = price_move / entry * 100
             result = "TIME_STOP"
-            t["time_stop_triggered"] = True  # separate Flag, original time_stop Stunden bleiben erhalten
+            t["time_stop_triggered"] = True
 
         if not result:
             if direction == "LONG":
                 if price <= sl:
-                    result, pnl = "LOSS", -risk_pct
+                    result, pnl = "LOSS", (sl - entry) / entry * 100
                 elif price >= tp:
-                    rr = abs(tp - entry) / sl_dist if sl_dist > 0 else 1
-                    result, pnl = "WIN", risk_pct * rr
+                    result, pnl = "WIN", (tp - entry) / entry * 100
             else:
                 if price >= sl:
-                    result, pnl = "LOSS", -risk_pct
+                    result, pnl = "LOSS", (entry - sl) / entry * 100
                 elif price <= tp:
-                    rr = abs(entry - tp) / sl_dist if sl_dist > 0 else 1
-                    result, pnl = "WIN", risk_pct * rr
+                    result, pnl = "WIN", (entry - tp) / entry * 100
 
         if result:
             t["status"] = "CLOSED"

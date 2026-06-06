@@ -145,7 +145,8 @@ def macd(closes, fast=12, slow=26, signal=9):
             v.append(x * k + v[-1] * (1 - k))
         return v
     ef, es = _e(closes, fast), _e(closes, slow)
-    ml = [f - s for f, s in zip(ef, es[-len(ef):])]
+    # Korrekt: Beide EMAs auf gleichen Zeitpunkt ausrichten (ab Bar slow-1)
+    ml = [f - s for f, s in zip(ef[slow - fast:], es)]
     sig = _e(ml, signal)
     hist = [m - s for m, s in zip(ml[-len(sig):], sig)]
     pad = n - len(ml)
@@ -322,7 +323,7 @@ def precompute_all(ohlcv, htf_ohlcv, symbol, strat_map):
             if idx < 10:
                 htf_zones_per_h4.append({"demand": [], "supply": []})
             else:
-                hslice = htf_ohlcv[max(0, idx - 39):idx + 1]
+                hslice = htf_ohlcv[max(0, idx - 39):idx]
                 htf_zones_per_h4.append(find_order_blocks(hslice, min_impulse_pct=1.0, lookback=40))
 
         # Mapping H1 -> H4
@@ -605,7 +606,8 @@ def analyze_pair_backtest_fast(ohlcv, pre, i, symbol, strat_map):
             if pre["bb_up"][j] is not None and pre["bb_low"][j] is not None and pre["bb_mid"][j] is not None and pre["bb_mid"][j] > 0:
                 bb_width_hist.append((pre["bb_up"][j] - pre["bb_low"][j]) / pre["bb_mid"][j] * 100)
         if bb_width_hist and bb_width == min(bb_width_hist) and bb_width < 4.0:
-            if current["close"] < bb_mid_i and trend != "BEARISH":
+            # Validierung: Preis in unterer Hälfte + bullische Kerze (close > open)
+            if current["close"] < bb_mid_i and trend != "BEARISH" and current["close"] > current["open"]:
                 add_setup("BB_SQUEEZE_LONG", "LONG", 75)
 
     # Primary/Secondary Boost

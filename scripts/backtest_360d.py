@@ -444,10 +444,12 @@ def analyze_pair_backtest_fast(ohlcv, pre, i, symbol, strat_map):
             return
         if not cond:
             return
+        # H1-Trend-Guard: LONG nur bei BULLISH, SHORT nur bei BEARISH
         if trend != "BULLISH" and direction == "LONG":
             return
         if trend != "BEARISH" and direction == "SHORT":
             return
+        # HTF-Trend-Filter
         if htf_trend == "BULLISH" and direction == "SHORT":
             return
         if htf_trend == "BEARISH" and direction == "LONG" and trend != "BULLISH":

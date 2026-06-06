@@ -863,15 +863,15 @@ def analyze_pair(symbol, interval="HOUR_1", strat_map=None):
             return
         if trend != "BEARISH" and direction == "SHORT":
             return
-        # Optional: Regime-allowed-Filter (nur wenn explizit gesetzt)
-        if allowed_strategies and name not in allowed_strategies:
-            return
         # HTF-Filter
         if htf_trend == "BULLISH" and direction == "SHORT":
             log(f"{symbol}: {name} abgelehnt — SHORT widerspricht H4-BULLISH")
             return
         if htf_trend == "BEARISH" and direction == "LONG" and trend != "BULLISH":
             log(f"{symbol}: {name} abgelehnt — LONG bei H4-BEARISH und schwachem H1")
+            return
+        # Optional: Regime-allowed-Filter (nur wenn explizit gesetzt)
+        if allowed_strategies and name not in allowed_strategies:
             return
         setups.append({"name": name, "direction": direction, "confidence": conf})
 

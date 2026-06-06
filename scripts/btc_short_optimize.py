@@ -73,7 +73,7 @@ def run_btc_short_backtest(ohlcv, htf_ohlcv, sl_mult, tp_mult, time_stop):
             pnl = 0
             bars_alive = i - open_trade["entry_bar"]
 
-            if bars_alive >= ts_bear:
+            if bars_alive >= time_stop:
                 # Time-Stop schliesst den Trade immer nach Ablauf der Frist
                 pnl = (entry - close) / entry * 100
                 result = "TIME_STOP"

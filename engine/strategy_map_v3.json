@@ -1,0 +1,92 @@
+{
+  "version": "3.2",
+  "pairs": {
+    "BTC_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 70,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 4.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": ["TREND_FOLLOW_LONG", "HIGHER_LOW_BREAK", "MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "RSI_DIVERGENCE_LONG", "RSI_DIVERGENCE_SHORT", "STOCH_MR_SHORT", "EMA_BOUNCE_SHORT", "VWAP_RETAIL_SHORT", "WILLR_SHORT", "BB_SQUEEZE_LONG"],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "LOWER_HIGH_BREAK": { "direction": "SHORT", "sl_atr_mult": 1.5, "tp_atr_mult": 4.0, "min_confidence": 70 },
+        "EMA50_BOUNCE_LONG": { "direction": "LONG", "sl_atr_mult": 1.5, "tp_atr_mult": 4.0, "min_confidence": 65 },
+        "TREND_FOLLOW_SHORT": { "direction": "SHORT", "sl_atr_mult": 3.0, "tp_atr_mult": 2.5, "time_stop": 72, "min_confidence": 55 }
+      },
+      "TRENDING_BULL": {"strategies": ["EMA50_BOUNCE_LONG"], "confidence_boost": 5, "risk_mult": 1.2},
+      "TRENDING_BEAR": {"strategies": ["TREND_FOLLOW_SHORT"], "confidence_boost": 0, "risk_mult": 1.0},
+      "NEUTRAL_RANGE": {"strategies": ["EMA50_BOUNCE_LONG"], "confidence_boost": 10, "risk_mult": 0.9},
+      "SQUEEZE_RANGE": {"strategies": ["EMA50_BOUNCE_LONG"], "confidence_boost": 10, "risk_mult": 1.0},
+      "VOLATILE": {"strategies": [], "confidence_boost": 5, "risk_mult": 0.8},
+      "TRANSITION": {"strategies": [], "confidence_boost": -20, "risk_mult": 0.5}
+    },
+    "ETH_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 4.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": ["TREND_FOLLOW_LONG", "EMA_BOUNCE_SHORT", "HIGHER_LOW_BREAK", "MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "VWAP_RETAIL_SHORT", "RSI_DIVERGENCE_LONG", "RSI_DIVERGENCE_SHORT", "EMA50_BOUNCE_LONG", "RANGE_BREAKOUT_SHORT", "WILLR_LONG", "WILLR_SHORT", "BB_BOUNCE_LONG"],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "BB_SQUEEZE_LONG": { "direction": "LONG", "sl_atr_mult": 1.5, "tp_atr_mult": 4.0, "time_stop": 96, "min_confidence": 55 },
+        "TREND_FOLLOW_SHORT": { "direction": "SHORT", "sl_atr_mult": 2.0, "tp_atr_mult": 2.5, "time_stop": 48, "min_confidence": 55 }
+      },
+      "TRENDING_BULL": {"strategies": ["BB_SQUEEZE_LONG"], "confidence_boost": 5, "risk_mult": 1.2},
+      "TRENDING_BEAR": {"strategies": ["TREND_FOLLOW_SHORT"], "confidence_boost": 0, "risk_mult": 1.0},
+      "NEUTRAL_RANGE": {"strategies": ["BB_SQUEEZE_LONG"], "confidence_boost": 10, "risk_mult": 0.9},
+      "SQUEEZE_RANGE": {"strategies": ["BB_SQUEEZE_LONG"], "confidence_boost": 10, "risk_mult": 1.0},
+      "VOLATILE": {"strategies": [], "confidence_boost": 5, "risk_mult": 0.8},
+      "TRANSITION": {"strategies": [], "confidence_boost": -20, "risk_mult": 0.5}
+    },
+    "NEAR_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.0,
+      "tp_atr_mult": 2.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": ["TREND_FOLLOW_LONG", "TREND_FOLLOW_SHORT", "EMA_BOUNCE_SHORT", "HIGHER_LOW_BREAK", "MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "VWAP_RETAIL_SHORT", "RSI_DIVERGENCE_LONG", "RSI_DIVERGENCE_SHORT", "LOWER_HIGH_BREAK", "EMA50_BOUNCE_LONG", "WILLR_SHORT", "EMA_COMPRESSION_BREAK", "STOCH_MR_SHORT", "BB_SQUEEZE_LONG"],
+      "filters": {
+        "block_long_on_bearish_htf": false,
+        "block_long_on_rsi_50_59": true
+      },
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "BB_BOUNCE_LONG": { "direction": "LONG", "sl_atr_mult": 1.0, "tp_atr_mult": 2.0, "min_confidence": 55 }
+      },
+      "TRENDING_BULL": {"strategies": ["BB_BOUNCE_LONG"], "confidence_boost": 5, "risk_mult": 1.2},
+      "TRENDING_BEAR": {"strategies": [], "confidence_boost": 0, "risk_mult": 1.0},
+      "NEUTRAL_RANGE": {"strategies": ["BB_BOUNCE_LONG"], "confidence_boost": 10, "risk_mult": 0.9},
+      "SQUEEZE_RANGE": {"strategies": ["BB_BOUNCE_LONG"], "confidence_boost": 10, "risk_mult": 1.0},
+      "VOLATILE": {"strategies": [], "confidence_boost": 5, "risk_mult": 0.8},
+      "TRANSITION": {"strategies": [], "confidence_boost": -20, "risk_mult": 0.5}
+    },
+    "DOGE_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 2.5,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": ["TREND_FOLLOW_LONG", "HIGHER_LOW_BREAK", "MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "EMA_BOUNCE_SHORT", "RSI_DIVERGENCE_LONG", "RSI_DIVERGENCE_SHORT", "LOWER_HIGH_BREAK", "WILLR_SHORT", "EMA_COMPRESSION_BREAK", "STOCH_MR_SHORT", "VWAP_RETAIL_SHORT", "BB_SQUEEZE_LONG"],
+      "strategy_params": {
+        "BB_BOUNCE_LONG": { "direction": "LONG", "sl_atr_mult": 1.5, "tp_atr_mult": 2.5, "min_confidence": 55 },
+        "EMA50_BOUNCE_LONG": { "direction": "LONG", "sl_atr_mult": 1.5, "tp_atr_mult": 2.5, "min_confidence": 55 },
+        "TREND_FOLLOW_SHORT": { "direction": "SHORT", "sl_atr_mult": 2.5, "tp_atr_mult": 2.0, "time_stop": 24, "min_confidence": 55 }
+      },
+      "TRENDING_BULL": {"strategies": ["BB_BOUNCE_LONG", "EMA50_BOUNCE_LONG"], "confidence_boost": 5, "risk_mult": 1.2},
+      "TRENDING_BEAR": {"strategies": ["TREND_FOLLOW_SHORT"], "confidence_boost": 0, "risk_mult": 1.0},
+      "NEUTRAL_RANGE": {"strategies": ["BB_BOUNCE_LONG", "EMA50_BOUNCE_LONG"], "confidence_boost": 10, "risk_mult": 0.9},
+      "SQUEEZE_RANGE": {"strategies": ["BB_BOUNCE_LONG", "EMA50_BOUNCE_LONG"], "confidence_boost": 10, "risk_mult": 1.0},
+      "VOLATILE": {"strategies": [], "confidence_boost": 5, "risk_mult": 0.8},
+      "TRANSITION": {"strategies": [], "confidence_boost": -20, "risk_mult": 0.5}
+    }
+  }
+}

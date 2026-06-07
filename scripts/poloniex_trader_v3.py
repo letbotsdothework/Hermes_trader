@@ -49,7 +49,9 @@ BASE_URL = "https://api.poloniex.com"
 CORR_CLUSTERS = {
     "BTC_USDT": "A", "ETH_USDT": "A",
     "NEAR_USDT": "B",
-    "DOGE_USDT": "C"
+    "DOGE_USDT": "C",
+    "XRP_USDT": "D",
+    "SOL_USDT": "A2"
 }
 
 # ---------------------------------------------------------------------------

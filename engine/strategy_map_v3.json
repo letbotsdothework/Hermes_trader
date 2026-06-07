@@ -411,6 +411,103 @@
         "confidence_boost": -20,
         "risk_mult": 0.5
       }
+    },
+    "XRP_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 2.5,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": [
+        "TREND_FOLLOW_LONG",
+        "MEAN_REVERSION_LONG",
+        "EMA_BOUNCE_LONG",
+        "VWAP_RETAIL_LONG",
+        "RSI_DIVERGENCE_LONG",
+        "WILLR_LONG",
+        "BB_SQUEEZE_LONG",
+        "BB_BOUNCE_LONG",
+        "EMA50_BOUNCE_LONG",
+        "HIGHER_LOW_BREAK",
+        "LOWER_HIGH_BREAK",
+        "TREND_FOLLOW_SHORT",
+        "VWAP_RETAIL_SHORT",
+        "RSI_DIVERGENCE_SHORT",
+        "WILLR_SHORT",
+        "RANGE_BREAKOUT_SHORT",
+        "BB_SQUEEZE_LONG"
+      ],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "EMA_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 55
+        },
+        "MEAN_REVERSION_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 55
+        },
+        "STOCH_MR_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 55
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 55
+        }
+      },
+      "TRENDING_BULL": {
+        "strategies": [],
+        "confidence_boost": 0,
+        "risk_mult": 1.0
+      },
+      "TRENDING_BEAR": {
+        "strategies": [
+          "EMA_BOUNCE_SHORT",
+          "MEAN_REVERSION_SHORT",
+          "STOCH_MR_SHORT",
+          "EMA_COMPRESSION_BREAK"
+        ],
+        "confidence_boost": 0,
+        "risk_mult": 1.0
+      },
+      "NEUTRAL_RANGE": {
+        "strategies": [
+          "EMA_BOUNCE_SHORT",
+          "MEAN_REVERSION_SHORT"
+        ],
+        "confidence_boost": 10,
+        "risk_mult": 0.9
+      },
+      "SQUEEZE_RANGE": {
+        "strategies": [
+          "EMA_COMPRESSION_BREAK"
+        ],
+        "confidence_boost": 10,
+        "risk_mult": 1.0
+      },
+      "VOLATILE": {
+        "strategies": [],
+        "confidence_boost": -10,
+        "risk_mult": 0.8
+      },
+      "TRANSITION": {
+        "strategies": [
+          "EMA_COMPRESSION_BREAK"
+        ],
+        "confidence_boost": -20,
+        "risk_mult": 0.5
+      }
     }
   }
 }

@@ -377,7 +377,7 @@ DEFAULT_STRATEGY_MAP = {
             },
             "VOLATILE": {
                 "strategies": ["MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "WILLR_LONG", "WILLR_SHORT"],
-                "confidence_boost": 5, "risk_mult": 0.8
+                "confidence_boost": -10, "risk_mult": 0.8
             },
             "TRANSITION": {
                 "strategies": [],
@@ -407,7 +407,7 @@ DEFAULT_STRATEGY_MAP = {
             },
             "VOLATILE": {
                 "strategies": ["MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "WILLR_LONG", "WILLR_SHORT"],
-                "confidence_boost": 5, "risk_mult": 0.8
+                "confidence_boost": -10, "risk_mult": 0.8
             },
             "TRANSITION": {
                 "strategies": [],
@@ -437,7 +437,7 @@ DEFAULT_STRATEGY_MAP = {
             },
             "VOLATILE": {
                 "strategies": ["MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "WILLR_LONG", "WILLR_SHORT"],
-                "confidence_boost": 5, "risk_mult": 0.8
+                "confidence_boost": -10, "risk_mult": 0.8
             },
             "TRANSITION": {
                 "strategies": [],
@@ -467,7 +467,7 @@ DEFAULT_STRATEGY_MAP = {
             },
             "VOLATILE": {
                 "strategies": ["MEAN_REVERSION_LONG", "MEAN_REVERSION_SHORT", "WILLR_LONG", "WILLR_SHORT"],
-                "confidence_boost": 5, "risk_mult": 0.8
+                "confidence_boost": -10, "risk_mult": 0.8
             },
             "TRANSITION": {
                 "strategies": [],
@@ -867,11 +867,14 @@ def analyze_pair(symbol, interval="HOUR_1", strat_map=None):
         if htf_trend == "BULLISH" and direction == "SHORT":
             log(f"{symbol}: {name} abgelehnt — SHORT widerspricht H4-BULLISH")
             return
-        if htf_trend == "BEARISH" and direction == "LONG" and trend != "BULLISH":
-            log(f"{symbol}: {name} abgelehnt — LONG bei H4-BEARISH und schwachem H1")
-            return
-        # Optional: Regime-allowed-Filter (nur wenn explizit gesetzt)
-        if allowed_strategies and name not in allowed_strategies:
+        if htf_trend == "BEARISH" and direction == "LONG":
+            filters = pair_prefs.get("filters", {})
+            block_htf_default = symbol != "BTC_USDT"
+            if filters.get("block_long_on_bearish_htf", block_htf_default) and trend != "BULLISH":
+                log(f"{symbol}: {name} abgelehnt — LONG bei H4-BEARISH und schwachem H1")
+                return
+        # Optional: Regime-allowed-Filter (sogar leere Liste blockt)
+        if allowed_strategies is not None and name not in allowed_strategies:
             return
         setups.append({"name": name, "direction": direction, "confidence": conf})
 
@@ -1179,9 +1182,11 @@ def build_trade(analysis, cfg, pair_prefs=None):
     if symbol == "ETH_USDT" and direction == "SHORT" and analysis.get("momentum") == "BULLISH":
         return None
 
-    # BTC H4-Trend-Filter für Altcoins
+    # H4-Trend-Filter (paar-spezifisch, default: true für non-BTC)
     htf_trend = analysis.get("htf_trend", "NEUTRAL")
-    if symbol != "BTC_USDT" and htf_trend == "BEARISH" and direction == "LONG":
+    filters = pp.get("filters", {})
+    block_htf_default = symbol != "BTC_USDT"
+    if filters.get("block_long_on_bearish_htf", block_htf_default) and htf_trend == "BEARISH" and direction == "LONG":
         return None
 
     # RSI-Filter für LONGs

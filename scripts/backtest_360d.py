@@ -16,7 +16,7 @@ BASE_URL = "https://api.poloniex.com"
 CACHE_DIR = os.path.expanduser("~/.hermes_trader/backtests/cache")
 RESULT_DIR = os.path.expanduser("~/.hermes_trader/backtests")
 CONFIG_PATH = os.path.expanduser("~/.hermes_trader/config.json")
-STRATEGY_MAP_PATH = os.path.expanduser("~/.hermes_trader/engine/strategy_map.json")
+STRATEGY_MAP_PATH = os.path.expanduser("~/.hermes_trader/engine/strategy_map_v3.json")
 
 os.makedirs(CACHE_DIR, exist_ok=True)
 os.makedirs(RESULT_DIR, exist_ok=True)
@@ -212,6 +212,82 @@ def williams_r(highs, lows, closes, period=14):
             r.append((window_high - closes[i]) / range_ * -100)
     return r
 
+def adx(data, period=14):
+    """Average Directional Index — Trendstärke 0-100"""
+    if len(data) < period * 2 + 1:
+        return [None] * len(data)
+    trs, plus_dm, minus_dm = [0], [0], [0]
+    for i in range(1, len(data)):
+        tr = max(data[i]["high"]-data[i]["low"],
+                 abs(data[i]["high"]-data[i-1]["close"]),
+                 abs(data[i]["low"]-data[i-1]["close"]))
+        trs.append(tr)
+        up = data[i]["high"] - data[i-1]["high"]
+        down = data[i-1]["low"] - data[i]["low"]
+        plus_dm.append(max(up, 0) if up > down else 0)
+        minus_dm.append(max(down, 0) if down > up else 0)
+    atr_vals = [None] * period
+    plus_di_vals = [None] * period
+    minus_di_vals = [None] * period
+    dx_vals = [None] * period
+    atr_smooth = sum(trs[1:period+1]) / period
+    plus_smooth = sum(plus_dm[1:period+1]) / period
+    minus_smooth = sum(minus_dm[1:period+1]) / period
+    for i in range(period + 1, len(data)):
+        atr_smooth = (atr_smooth * (period - 1) + trs[i]) / period
+        plus_smooth = (plus_smooth * (period - 1) + plus_dm[i]) / period
+        minus_smooth = (minus_smooth * (period - 1) + minus_dm[i]) / period
+        plus_di = 100 * plus_smooth / atr_smooth if atr_smooth > 0 else 0
+        minus_di = 100 * minus_smooth / atr_smooth if atr_smooth > 0 else 0
+        dx = 100 * abs(plus_di - minus_di) / (plus_di + minus_di) if (plus_di + minus_di) > 0 else 0
+        atr_vals.append(atr_smooth)
+        plus_di_vals.append(plus_di)
+        minus_di_vals.append(minus_di)
+        dx_vals.append(dx)
+    adx_vals = [None] * (period + 1)
+    if len(dx_vals) > period + 1 and dx_vals[period + 1] is not None:
+        adx_smooth = sum(dx_vals[period + 1:period * 2 + 1]) / period
+        adx_vals.append(adx_smooth)
+        for i in range(period * 2 + 1, len(dx_vals)):
+            if dx_vals[i] is not None:
+                adx_smooth = (adx_smooth * (period - 1) + dx_vals[i]) / period
+                adx_vals.append(adx_smooth)
+            else:
+                adx_vals.append(None)
+    pad = len(data) - len(adx_vals)
+    return [None] * pad + adx_vals
+
+def detect_regime(ohlcv, closes, ema50):
+    """
+    Erkennt Markt-Regime pro Pair basierend auf:
+    - ADX(14): Trendstärke
+    - BB-Width(20,2): Volatilität/Squeeze
+    - EMA50-Slope(10): Trendrichtung
+    """
+    if len(ohlcv) < 55 or len(closes) < 55:
+        return "TRANSITION"
+    adx_vals = adx(ohlcv, 14)
+    adx_now = adx_vals[-1] if adx_vals and adx_vals[-1] is not None else 0
+    bb_mid, bb_up, bb_low = bbands(closes, 20, 2.0)
+    bbw = 0
+    if bb_mid[-1] and bb_mid[-1] > 0 and bb_up[-1] and bb_low[-1]:
+        bbw = (bb_up[-1] - bb_low[-1]) / bb_mid[-1] * 100
+    ema_slope = 0
+    if ema50[-1] and ema50[-10]:
+        ema_slope = (ema50[-1] - ema50[-10]) / ema50[-10] * 100
+    if adx_now > 25 and bbw > 3.0:
+        if ema_slope > 0.5:
+            return "TRENDING_BULL"
+        elif ema_slope < -0.5:
+            return "TRENDING_BEAR"
+    if adx_now < 20 and bbw < 3.0:
+        return "SQUEEZE_RANGE"
+    if adx_now < 20 and 3.0 <= bbw <= 6.0:
+        return "NEUTRAL_RANGE"
+    if bbw > 6.0:
+        return "VOLATILE"
+    return "TRANSITION"
+
 def swing_highs_lows(highs, lows, lookback=3):
     n = len(highs)
     swing_h, swing_l = [], []
@@ -343,6 +419,14 @@ def precompute_all(ohlcv, htf_ohlcv, symbol, strat_map):
                 htf_trend_per_i[i] = htf_trend_per_h4[h4i]
                 htf_zones_per_i[i] = htf_zones_per_h4[h4i]
 
+    # Regime pro Bar vorab berechnen (Lookback-Window bis i)
+    regime_per_i = ["TRANSITION"] * n
+    for i in range(55, n):
+        window = ohlcv[:i+1]
+        window_closes = closes[:i+1]
+        window_ema50 = ema50[:i+1]
+        regime_per_i[i] = detect_regime(window, window_closes, window_ema50)
+
     return {
         "closes": closes, "highs": highs, "lows": lows, "volumes": volumes,
         "ema9": ema9, "ema21": ema21, "ema50": ema50,
@@ -355,6 +439,7 @@ def precompute_all(ohlcv, htf_ohlcv, symbol, strat_map):
         "swing_h": swing_h_all, "swing_l": swing_l_all,
         "htf_trend": htf_trend_per_i,
         "htf_zones": htf_zones_per_i,
+        "regime": regime_per_i,
     }
 
 # ---------------------------------------------------------------------------
@@ -423,10 +508,14 @@ def analyze_pair_backtest_fast(ohlcv, pre, i, symbol, strat_map):
     vwap_val = pre["vwap"][i]
     htf_trend = pre["htf_trend"][i]
     htf_zones = pre["htf_zones"][i] if pre["htf_zones"][i] else {"demand": [], "supply": []}
+    regime = pre["regime"][i]
 
     setups = []
     pair_prefs = strat_map.get(symbol, {})
     avoid = pair_prefs.get("avoid", [])
+    regime_prefs = pair_prefs.get(regime, {})
+    allowed_strategies = regime_prefs.get("strategies", None)
+    regime_conf_boost = regime_prefs.get("confidence_boost", 0)
 
     ema_dist_min = pair_prefs.get("ema_dist_min", 0.3)
     ema_dist = abs(e9 - e21) / e21 * 100 if e21 else 0
@@ -454,6 +543,11 @@ def analyze_pair_backtest_fast(ohlcv, pre, i, symbol, strat_map):
             return
         if htf_trend == "BEARISH" and direction == "LONG" and trend != "BULLISH":
             return
+        # Regime-Filter (sogar leere Liste blockt)
+        if allowed_strategies is not None and name not in allowed_strategies:
+            return
+        # Regime Confidence-Boost
+        conf = conf + regime_conf_boost
         setups.append({"name": name, "direction": direction, "confidence": conf})
 
     # 1) Trendfolge
@@ -667,7 +761,8 @@ def analyze_pair_backtest_fast(ohlcv, pre, i, symbol, strat_map):
         "all_setups": [s["name"] for s in setups],
         "htf_zones": htf_zones,
         "active_zone": active_zone,
-        "zone_type": zone_type
+        "zone_type": zone_type,
+        "regime": regime,
     }, None
 
 # ---------------------------------------------------------------------------
@@ -727,6 +822,12 @@ def build_trade(analysis, cfg, strat_map_override=None):
     base_risk = cfg.get("risk_per_trade_pct", 1.0)
     risk_pct = base_risk
 
+    # Regime-Risk-Multiplikator
+    regime = analysis.get("regime", "TRANSITION")
+    regime_prefs = pair_prefs.get(regime, {})
+    regime_risk_mult = regime_prefs.get("risk_mult", 1.0)
+    risk_pct = base_risk * regime_risk_mult
+
     sl_dist = atr_val * sl_mult
     tp_dist = atr_val * tp_mult
     zone_sl, zone_tp = get_zone_sl_tp(price, direction, analysis.get("htf_zones", {"demand": [], "supply": []}))
@@ -753,7 +854,8 @@ def build_trade(analysis, cfg, strat_map_override=None):
         "htf_trend": analysis.get("htf_trend", "NEUTRAL"),
         "momentum": analysis["momentum"], "rsi": round(analysis["rsi"], 2) if analysis["rsi"] else None,
         "rsi_state": analysis["rsi_state"], "bb_state": analysis["bb_state"],
-        "status": "OPEN"
+        "status": "OPEN",
+        "regime": regime,
     }
 
 # ---------------------------------------------------------------------------

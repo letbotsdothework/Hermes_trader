@@ -1,5 +1,5 @@
 {
-  "version": "3.2",
+  "version": "3.3",
   "pairs": {
     "BTC_USDT": {
       "timeframe": "HOUR_1",
@@ -80,7 +80,9 @@
         "risk_mult": 0.8
       },
       "TRANSITION": {
-        "strategies": [],
+        "strategies": [
+          "EMA_COMPRESSION_BREAK"
+        ],
         "confidence_boost": -20,
         "risk_mult": 0.5
       }
@@ -138,7 +140,8 @@
       },
       "TRENDING_BEAR": {
         "strategies": [
-          "TREND_FOLLOW_SHORT"
+          "TREND_FOLLOW_SHORT",
+          "EMA_COMPRESSION_BREAK"
         ],
         "confidence_boost": 0,
         "risk_mult": 1.0
@@ -152,7 +155,8 @@
       },
       "SQUEEZE_RANGE": {
         "strategies": [
-          "BB_BOUNCE_LONG"
+          "BB_BOUNCE_LONG",
+          "EMA_BOUNCE_LONG"
         ],
         "confidence_boost": 10,
         "risk_mult": 1.0
@@ -163,7 +167,9 @@
         "risk_mult": 0.8
       },
       "TRANSITION": {
-        "strategies": [],
+        "strategies": [
+          "EMA_COMPRESSION_BREAK"
+        ],
         "confidence_boost": -20,
         "risk_mult": 0.5
       }
@@ -183,12 +189,10 @@
         "MEAN_REVERSION_LONG",
         "MEAN_REVERSION_SHORT",
         "VWAP_RETAIL_SHORT",
-        "RSI_DIVERGENCE_LONG",
         "RSI_DIVERGENCE_SHORT",
         "LOWER_HIGH_BREAK",
         "EMA50_BOUNCE_LONG",
         "WILLR_SHORT",
-        "EMA_COMPRESSION_BREAK",
         "STOCH_MR_SHORT",
         "BB_SQUEEZE_LONG"
       ],
@@ -229,18 +233,23 @@
       },
       "SQUEEZE_RANGE": {
         "strategies": [
-          "BB_BOUNCE_LONG"
+          "BB_BOUNCE_LONG",
+          "EMA_BOUNCE_LONG"
         ],
         "confidence_boost": 10,
         "risk_mult": 1.0
       },
       "VOLATILE": {
-        "strategies": [],
+        "strategies": [
+          "RSI_DIVERGENCE_LONG"
+        ],
         "confidence_boost": -10,
         "risk_mult": 0.8
       },
       "TRANSITION": {
-        "strategies": [],
+        "strategies": [
+          "EMA_COMPRESSION_BREAK"
+        ],
         "confidence_boost": -20,
         "risk_mult": 0.5
       }
@@ -259,10 +268,8 @@
         "MEAN_REVERSION_SHORT",
         "EMA_BOUNCE_SHORT",
         "RSI_DIVERGENCE_LONG",
-        "RSI_DIVERGENCE_SHORT",
         "LOWER_HIGH_BREAK",
         "WILLR_SHORT",
-        "EMA_COMPRESSION_BREAK",
         "STOCH_MR_SHORT",
         "VWAP_RETAIL_SHORT",
         "BB_SQUEEZE_LONG"
@@ -299,7 +306,8 @@
       "TRENDING_BEAR": {
         "strategies": [
           "TREND_FOLLOW_SHORT",
-          "BB_BOUNCE_SHORT"
+          "BB_BOUNCE_SHORT",
+          "EMA_COMPRESSION_BREAK"
         ],
         "confidence_boost": 0,
         "risk_mult": 1.0
@@ -321,12 +329,16 @@
         "risk_mult": 1.0
       },
       "VOLATILE": {
-        "strategies": [],
+        "strategies": [
+          "RSI_DIVERGENCE_SHORT"
+        ],
         "confidence_boost": -10,
         "risk_mult": 0.8
       },
       "TRANSITION": {
-        "strategies": [],
+        "strategies": [
+          "EMA_COMPRESSION_BREAK"
+        ],
         "confidence_boost": -20,
         "risk_mult": 0.5
       }

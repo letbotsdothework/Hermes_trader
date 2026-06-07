@@ -8,6 +8,7 @@
       "tp_atr_mult": 4.0,
       "volume_mult": 1.0,
       "ema_dist_min": 0.0,
+      "lh_conf_base": 70,
       "avoid": [
         "TREND_FOLLOW_LONG",
         "HIGHER_LOW_BREAK",
@@ -309,6 +310,8 @@
       "tp_atr_mult": 2.5,
       "volume_mult": 1.0,
       "ema_dist_min": 0.0,
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 24,
       "avoid": [
         "TREND_FOLLOW_LONG",
         "HIGHER_LOW_BREAK",

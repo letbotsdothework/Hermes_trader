@@ -762,6 +762,22 @@ def analyze_pair_backtest_fast(ohlcv, pre, i, symbol, strat_map):
                         s["confidence"] = max(0, s["confidence"] - 10)
                         break
 
+    # MULTI-FACTOR CONFLUENCE BOOST
+    # Wenn 2+ Strategien in gleiche Richtung signalisieren
+    direction_groups = {}
+    for s in setups:
+        d = s["direction"]
+        if d not in direction_groups:
+            direction_groups[d] = []
+        direction_groups[d].append(s)
+
+    for direction, group in direction_groups.items():
+        if len(group) >= 2:
+            group.sort(key=lambda x: x["confidence"], reverse=True)
+            best_signal = group[0]
+            boost = min(15, (len(group) - 1) * 5)
+            best_signal["confidence"] = min(100, best_signal["confidence"] + boost)
+
     if not setups:
         return None, f"Kein Setup (Trend={trend}, H4={htf_trend})"
 

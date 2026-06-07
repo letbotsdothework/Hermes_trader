@@ -42,6 +42,18 @@
           "tp_atr_mult": 2.5,
           "time_stop": 72,
           "min_confidence": 55
+        },
+        "BB_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 60
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 65
         }
       },
       "TRENDING_BULL": {
@@ -129,6 +141,18 @@
           "tp_atr_mult": 3.0,
           "time_stop": 48,
           "min_confidence": 55
+        },
+        "EMA_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 2.0,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 60
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.0,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 65
         }
       },
       "TRENDING_BULL": {
@@ -208,6 +232,30 @@
           "sl_atr_mult": 1.0,
           "tp_atr_mult": 2.0,
           "min_confidence": 55
+        },
+        "BB_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 60
+        },
+        "EMA_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 60
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 65
+        },
+        "RSI_DIVERGENCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 70
         }
       },
       "TRENDING_BULL": {
@@ -293,6 +341,24 @@
           "tp_atr_mult": 2.0,
           "time_stop": 24,
           "min_confidence": 55
+        },
+        "BB_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 60
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 65
+        },
+        "RSI_DIVERGENCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 70
         }
       },
       "TRENDING_BULL": {

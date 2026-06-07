@@ -419,13 +419,30 @@ def precompute_all(ohlcv, htf_ohlcv, symbol, strat_map):
                 htf_trend_per_i[i] = htf_trend_per_h4[h4i]
                 htf_zones_per_i[i] = htf_zones_per_h4[h4i]
 
-    # Regime pro Bar vorab berechnen (Lookback-Window bis i)
+    # Regime pro Bar vorab berechnen (O(n) statt O(n²))
+    adx_vals = adx(ohlcv, 14)
     regime_per_i = ["TRANSITION"] * n
     for i in range(55, n):
-        window = ohlcv[:i+1]
-        window_closes = closes[:i+1]
-        window_ema50 = ema50[:i+1]
-        regime_per_i[i] = detect_regime(window, window_closes, window_ema50)
+        adx_now = adx_vals[i] if adx_vals[i] is not None else 0
+        bbw = 0
+        if bb_mid[i] and bb_mid[i] > 0 and bb_up[i] and bb_low[i]:
+            bbw = (bb_up[i] - bb_low[i]) / bb_mid[i] * 100
+        ema_slope = 0
+        if ema50[i] and i >= 10 and ema50[i - 10]:
+            ema_slope = (ema50[i] - ema50[i - 10]) / ema50[i - 10] * 100
+        if adx_now > 25 and bbw > 3.0:
+            if ema_slope > 0.5:
+                regime_per_i[i] = "TRENDING_BULL"
+            elif ema_slope < -0.5:
+                regime_per_i[i] = "TRENDING_BEAR"
+        elif adx_now < 20 and bbw < 3.0:
+            regime_per_i[i] = "SQUEEZE_RANGE"
+        elif adx_now < 20 and 3.0 <= bbw <= 6.0:
+            regime_per_i[i] = "NEUTRAL_RANGE"
+        elif bbw > 6.0:
+            regime_per_i[i] = "VOLATILE"
+        else:
+            regime_per_i[i] = "TRANSITION"
 
     return {
         "closes": closes, "highs": highs, "lows": lows, "volumes": volumes,

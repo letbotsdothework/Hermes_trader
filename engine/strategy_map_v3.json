@@ -119,8 +119,7 @@
         "EMA50_BOUNCE_LONG",
         "RANGE_BREAKOUT_SHORT",
         "WILLR_LONG",
-        "WILLR_SHORT",
-        "BB_SQUEEZE_LONG"
+        "WILLR_SHORT"
       ],
       "filters": {
         "block_long_on_bearish_htf": true,
@@ -154,6 +153,13 @@
           "sl_atr_mult": 2.0,
           "tp_atr_mult": 2.5,
           "min_confidence": 65
+        },
+        "BB_SQUEEZE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 2.0,
+          "tp_atr_mult": 2.5,
+          "time_stop": 96,
+          "min_confidence": 55
         }
       },
       "TRENDING_BULL": {
@@ -173,7 +179,8 @@
       },
       "NEUTRAL_RANGE": {
         "strategies": [
-          "BB_BOUNCE_LONG"
+          "BB_BOUNCE_LONG",
+          "BB_SQUEEZE_LONG"
         ],
         "confidence_boost": 10,
         "risk_mult": 0.9
@@ -181,7 +188,8 @@
       "SQUEEZE_RANGE": {
         "strategies": [
           "BB_BOUNCE_LONG",
-          "EMA_BOUNCE_LONG"
+          "EMA_BOUNCE_LONG",
+          "BB_SQUEEZE_LONG"
         ],
         "confidence_boost": 10,
         "risk_mult": 1.0
@@ -415,7 +423,7 @@
     "XRP_USDT": {
       "timeframe": "HOUR_1",
       "min_confidence": 55,
-      "sl_atr_mult": 1.5,
+      "sl_atr_mult": 2.0,
       "tp_atr_mult": 2.5,
       "volume_mult": 1.0,
       "ema_dist_min": 0.0,
@@ -443,25 +451,25 @@
       "strategy_params": {
         "EMA_BOUNCE_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 1.5,
+          "sl_atr_mult": 2.0,
           "tp_atr_mult": 2.5,
           "min_confidence": 55
         },
         "MEAN_REVERSION_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 1.5,
+          "sl_atr_mult": 2.0,
           "tp_atr_mult": 2.5,
           "min_confidence": 55
         },
         "STOCH_MR_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 1.5,
+          "sl_atr_mult": 2.0,
           "tp_atr_mult": 2.5,
           "min_confidence": 55
         },
         "EMA_COMPRESSION_BREAK": {
           "direction": "SHORT",
-          "sl_atr_mult": 1.5,
+          "sl_atr_mult": 2.0,
           "tp_atr_mult": 2.5,
           "min_confidence": 55
         }

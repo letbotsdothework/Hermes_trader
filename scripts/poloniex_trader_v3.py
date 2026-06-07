@@ -30,7 +30,7 @@ DEFAULT_CONFIG = {
     "risk_per_trade_pct": 1.0,
     "max_daily_loss_pct": 3.0,
     "min_confidence": 55,
-    "pairs": ["BTC_USDT", "ETH_USDT", "NEAR_USDT", "DOGE_USDT"]
+    "pairs": ["BTC_USDT", "ETH_USDT", "NEAR_USDT", "DOGE_USDT", "XRP_USDT"]
 }
 
 # ---------------------------------------------------------------------------
@@ -480,13 +480,23 @@ DEFAULT_STRATEGY_MAP = {
 }
 
 def load_strategy_map():
-    if os.path.exists(STRATEGY_MAP_PATH):
+    import json
+    if not os.path.exists(STRATEGY_MAP_PATH):
+        raise RuntimeError(
+            f"CRITICAL: strategy_map file not found: {STRATEGY_MAP_PATH}. "
+            f"Bot cannot start without the configured strategy map."
+        )
+    try:
         with open(STRATEGY_MAP_PATH, "r") as f:
             data = json.load(f)
-        if "pairs" in data:
-            return data["pairs"]
-        return {k: v for k, v in data.items() if not k.startswith("_")}
-    return DEFAULT_STRATEGY_MAP["pairs"]
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            f"CRITICAL: strategy_map JSON decode error in {STRATEGY_MAP_PATH}: {e}. "
+            f"Fix the file before restarting the bot."
+        )
+    if "pairs" in data:
+        return data["pairs"]
+    return {k: v for k, v in data.items() if not k.startswith("_")}
 
 # ---------------------------------------------------------------------------
 # LERNJOURNAL v3 — Mit Regime-Kontext

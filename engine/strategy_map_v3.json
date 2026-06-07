@@ -53,7 +53,9 @@
       },
       "TRENDING_BEAR": {
         "strategies": [
-          "TREND_FOLLOW_SHORT"
+          "TREND_FOLLOW_SHORT",
+          "LOWER_HIGH_BREAK",
+          "BB_BOUNCE_SHORT"
         ],
         "confidence_boost": 0,
         "risk_mult": 1.0
@@ -212,7 +214,9 @@
         "risk_mult": 1.2
       },
       "TRENDING_BEAR": {
-        "strategies": [],
+        "strategies": [
+          "BB_BOUNCE_SHORT"
+        ],
         "confidence_boost": 0,
         "risk_mult": 1.0
       },
@@ -294,7 +298,8 @@
       },
       "TRENDING_BEAR": {
         "strategies": [
-          "TREND_FOLLOW_SHORT"
+          "TREND_FOLLOW_SHORT",
+          "BB_BOUNCE_SHORT"
         ],
         "confidence_boost": 0,
         "risk_mult": 1.0

@@ -28,8 +28,9 @@
         "LOWER_HIGH_BREAK": {
           "direction": "SHORT",
           "sl_atr_mult": 1.5,
-          "tp_atr_mult": 4.0,
-          "min_confidence": 70
+          "tp_atr_mult": 2.5,
+          "min_confidence": 50,
+          "time_stop": 72
         },
         "EMA50_BOUNCE_LONG": {
           "direction": "LONG",
@@ -46,15 +47,23 @@
         },
         "BB_BOUNCE_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 1.5,
+          "sl_atr_mult": 2.0,
           "tp_atr_mult": 2.5,
-          "min_confidence": 60
+          "min_confidence": 50,
+          "time_stop": 96
         },
         "EMA_COMPRESSION_BREAK": {
           "direction": "SHORT",
           "sl_atr_mult": 1.5,
           "tp_atr_mult": 2.5,
           "min_confidence": 65
+        },
+        "BB_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 24
         }
       },
       "TRENDING_BULL": {
@@ -130,17 +139,17 @@
       "strategy_params": {
         "BB_BOUNCE_LONG": {
           "direction": "LONG",
-          "sl_atr_mult": 2.0,
-          "tp_atr_mult": 2.5,
-          "time_stop": 96,
-          "min_confidence": 55
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 72
         },
         "TREND_FOLLOW_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 3.0,
-          "tp_atr_mult": 3.0,
-          "time_stop": 48,
-          "min_confidence": 55
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 70,
+          "time_stop": 72
         },
         "EMA_BOUNCE_LONG": {
           "direction": "LONG",
@@ -150,9 +159,10 @@
         },
         "EMA_COMPRESSION_BREAK": {
           "direction": "SHORT",
-          "sl_atr_mult": 2.0,
-          "tp_atr_mult": 2.5,
-          "min_confidence": 65
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 70,
+          "time_stop": 24
         },
         "BB_SQUEEZE_LONG": {
           "direction": "LONG",
@@ -238,15 +248,17 @@
       "strategy_params": {
         "BB_BOUNCE_LONG": {
           "direction": "LONG",
-          "sl_atr_mult": 1.0,
-          "tp_atr_mult": 2.0,
-          "min_confidence": 55
+          "sl_atr_mult": 2.0,
+          "tp_atr_mult": 3.5,
+          "min_confidence": 50,
+          "time_stop": 24
         },
         "BB_BOUNCE_SHORT": {
           "direction": "SHORT",
           "sl_atr_mult": 1.0,
           "tp_atr_mult": 2.0,
-          "min_confidence": 60
+          "min_confidence": 65,
+          "time_stop": 48
         },
         "EMA_BOUNCE_LONG": {
           "direction": "LONG",
@@ -257,8 +269,9 @@
         "EMA_COMPRESSION_BREAK": {
           "direction": "SHORT",
           "sl_atr_mult": 1.0,
-          "tp_atr_mult": 2.0,
-          "min_confidence": 65
+          "tp_atr_mult": 2.5,
+          "min_confidence": 70,
+          "time_stop": 48
         },
         "RSI_DIVERGENCE_LONG": {
           "direction": "LONG",
@@ -336,9 +349,10 @@
       "strategy_params": {
         "BB_BOUNCE_LONG": {
           "direction": "LONG",
-          "sl_atr_mult": 1.5,
-          "tp_atr_mult": 2.5,
-          "min_confidence": 55
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 24
         },
         "EMA50_BOUNCE_LONG": {
           "direction": "LONG",
@@ -348,22 +362,24 @@
         },
         "TREND_FOLLOW_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 2.5,
-          "tp_atr_mult": 2.0,
-          "time_stop": 24,
-          "min_confidence": 55
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 60,
+          "time_stop": 24
         },
         "BB_BOUNCE_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 1.5,
-          "tp_atr_mult": 2.0,
-          "min_confidence": 60
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 65,
+          "time_stop": 24
         },
         "EMA_COMPRESSION_BREAK": {
           "direction": "SHORT",
           "sl_atr_mult": 1.5,
-          "tp_atr_mult": 2.0,
-          "min_confidence": 65
+          "tp_atr_mult": 2.5,
+          "min_confidence": 50,
+          "time_stop": 72
         },
         "RSI_DIVERGENCE_SHORT": {
           "direction": "SHORT",
@@ -451,9 +467,10 @@
       "strategy_params": {
         "EMA_BOUNCE_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 2.0,
-          "tp_atr_mult": 2.5,
-          "min_confidence": 55
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 48
         },
         "MEAN_REVERSION_SHORT": {
           "direction": "SHORT",
@@ -463,15 +480,24 @@
         },
         "STOCH_MR_SHORT": {
           "direction": "SHORT",
-          "sl_atr_mult": 2.0,
-          "tp_atr_mult": 2.5,
-          "min_confidence": 55
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 65,
+          "time_stop": 72
         },
         "EMA_COMPRESSION_BREAK": {
           "direction": "SHORT",
-          "sl_atr_mult": 2.0,
-          "tp_atr_mult": 2.5,
-          "min_confidence": 55
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 70,
+          "time_stop": 24
+        },
+        "BB_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 24
         }
       },
       "TRENDING_BULL": {
@@ -515,6 +541,343 @@
         ],
         "confidence_boost": -20,
         "risk_mult": 0.5
+      }
+    },
+    "SOL_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 3.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": [
+        "MEAN_REVERSION_LONG",
+        "EMA_BOUNCE_LONG",
+        "VWAP_RETAIL_LONG",
+        "RSI_DIVERGENCE_LONG",
+        "WILLR_LONG",
+        "BB_SQUEEZE_LONG",
+        "EMA50_BOUNCE_LONG",
+        "HIGHER_LOW_BREAK",
+        "LOWER_HIGH_BREAK",
+        "TREND_FOLLOW_SHORT",
+        "MEAN_REVERSION_SHORT",
+        "RSI_DIVERGENCE_SHORT",
+        "WILLR_SHORT",
+        "RANGE_BREAKOUT_SHORT"
+      ],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "TREND_FOLLOW_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        },
+        "BB_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        },
+        "EMA_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 50,
+          "time_stop": 48
+        },
+        "VWAP_RETAIL_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.5,
+          "tp_atr_mult": 3.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 70,
+          "time_stop": 24
+        },
+        "STOCH_MR_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 96
+        },
+        "BB_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 48
+        }
+      }
+    },
+    "ADA_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 3.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": [
+        "TREND_FOLLOW_LONG",
+        "MEAN_REVERSION_LONG",
+        "EMA_BOUNCE_LONG",
+        "VWAP_RETAIL_LONG",
+        "RSI_DIVERGENCE_LONG",
+        "WILLR_LONG",
+        "BB_SQUEEZE_LONG",
+        "EMA50_BOUNCE_LONG",
+        "HIGHER_LOW_BREAK",
+        "LOWER_HIGH_BREAK",
+        "MEAN_REVERSION_SHORT",
+        "RSI_DIVERGENCE_SHORT",
+        "WILLR_SHORT",
+        "RANGE_BREAKOUT_SHORT"
+      ],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "BB_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 2.5,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        },
+        "TREND_FOLLOW_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        },
+        "EMA_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 48
+        },
+        "VWAP_RETAIL_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 3.5,
+          "min_confidence": 50,
+          "time_stop": 48
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.5,
+          "tp_atr_mult": 3.5,
+          "min_confidence": 70,
+          "time_stop": 48
+        },
+        "STOCH_MR_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 96
+        },
+        "BB_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 24
+        }
+      }
+    },
+    "AVAX_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 3.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": [
+        "TREND_FOLLOW_LONG",
+        "MEAN_REVERSION_LONG",
+        "EMA_BOUNCE_LONG",
+        "VWAP_RETAIL_LONG",
+        "RSI_DIVERGENCE_LONG",
+        "WILLR_LONG",
+        "BB_SQUEEZE_LONG",
+        "EMA50_BOUNCE_LONG",
+        "HIGHER_LOW_BREAK",
+        "LOWER_HIGH_BREAK",
+        "MEAN_REVERSION_SHORT",
+        "EMA_BOUNCE_SHORT",
+        "RSI_DIVERGENCE_SHORT",
+        "WILLR_SHORT",
+        "RANGE_BREAKOUT_SHORT",
+        "BB_BOUNCE_SHORT"
+      ],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "BB_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 50,
+          "time_stop": 24
+        },
+        "TREND_FOLLOW_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 24
+        },
+        "VWAP_RETAIL_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 24
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 70,
+          "time_stop": 48
+        },
+        "STOCH_MR_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 50,
+          "time_stop": 24
+        }
+      }
+    },
+    "LINK_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 3.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": [
+        "TREND_FOLLOW_LONG",
+        "MEAN_REVERSION_LONG",
+        "EMA_BOUNCE_LONG",
+        "VWAP_RETAIL_LONG",
+        "RSI_DIVERGENCE_LONG",
+        "WILLR_LONG",
+        "BB_SQUEEZE_LONG",
+        "EMA50_BOUNCE_LONG",
+        "HIGHER_LOW_BREAK",
+        "LOWER_HIGH_BREAK",
+        "TREND_FOLLOW_SHORT",
+        "MEAN_REVERSION_SHORT",
+        "EMA_BOUNCE_SHORT",
+        "RSI_DIVERGENCE_SHORT",
+        "EMA_COMPRESSION_BREAK",
+        "STOCH_MR_SHORT",
+        "WILLR_SHORT",
+        "RANGE_BREAKOUT_SHORT",
+        "BB_BOUNCE_SHORT"
+      ],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "BB_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 2.5,
+          "tp_atr_mult": 3.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        },
+        "VWAP_RETAIL_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 48
+        }
+      }
+    },
+    "LTC_USDT": {
+      "timeframe": "HOUR_1",
+      "min_confidence": 55,
+      "sl_atr_mult": 1.5,
+      "tp_atr_mult": 3.0,
+      "volume_mult": 1.0,
+      "ema_dist_min": 0.0,
+      "avoid": [
+        "TREND_FOLLOW_LONG",
+        "MEAN_REVERSION_LONG",
+        "EMA_BOUNCE_LONG",
+        "VWAP_RETAIL_LONG",
+        "RSI_DIVERGENCE_LONG",
+        "WILLR_LONG",
+        "EMA50_BOUNCE_LONG",
+        "HIGHER_LOW_BREAK",
+        "LOWER_HIGH_BREAK",
+        "TREND_FOLLOW_SHORT",
+        "MEAN_REVERSION_SHORT",
+        "RSI_DIVERGENCE_SHORT",
+        "WILLR_SHORT",
+        "RANGE_BREAKOUT_SHORT",
+        "BB_BOUNCE_SHORT"
+      ],
+      "time_stop_bullish": 96,
+      "time_stop_bearish": 48,
+      "strategy_params": {
+        "BB_SQUEEZE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 50,
+          "time_stop": 24
+        },
+        "BB_BOUNCE_LONG": {
+          "direction": "LONG",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 3.0,
+          "min_confidence": 50,
+          "time_stop": 24
+        },
+        "EMA_BOUNCE_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.5,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        },
+        "VWAP_RETAIL_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 1.5,
+          "tp_atr_mult": 2.5,
+          "min_confidence": 50,
+          "time_stop": 48
+        },
+        "EMA_COMPRESSION_BREAK": {
+          "direction": "SHORT",
+          "sl_atr_mult": 3.0,
+          "tp_atr_mult": 4.0,
+          "min_confidence": 70,
+          "time_stop": 96
+        },
+        "STOCH_MR_SHORT": {
+          "direction": "SHORT",
+          "sl_atr_mult": 2.5,
+          "tp_atr_mult": 2.0,
+          "min_confidence": 50,
+          "time_stop": 72
+        }
       }
     }
   }

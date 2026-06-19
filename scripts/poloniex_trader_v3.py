@@ -78,6 +78,7 @@ def log(msg):
 
 def report(msg):
     print(msg)
+    sys.stdout.flush()
 
 # ---------------------------------------------------------------------------
 # API

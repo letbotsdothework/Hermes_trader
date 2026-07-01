@@ -220,14 +220,15 @@
       "volume_mult": 1.0,
       "ema_dist_min": 0.0,
       "avoid": [
-        "TREND_FOLLOW_LONG",
+        "EMA50_BOUNCE_LONG",
         "HIGHER_LOW_BREAK",
         "MEAN_REVERSION_LONG",
         "MEAN_REVERSION_SHORT",
+        "RANGE_BREAKOUT_SHORT",
         "RSI_DIVERGENCE_LONG",
         "RSI_DIVERGENCE_SHORT",
-        "EMA50_BOUNCE_LONG",
-        "RANGE_BREAKOUT_SHORT",
+        "TREND_FOLLOW_LONG",
+        "TREND_FOLLOW_SHORT",
         "WILLR_LONG",
         "WILLR_SHORT"
       ],

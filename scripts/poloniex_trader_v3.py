@@ -1378,7 +1378,7 @@ def simulate_outcomes():
             t["pnl_pct"] = round(pnl, 4)
             t["close_time"] = datetime.datetime.now(timezone.utc).isoformat()
             log(f"[CLOSED] {t['pair']} {direction} {result} @ {price:.4f} PnL={pnl:.2f}%")
-            report(f"TRADE CLOSED: {t['pair']} {direction} {result} @ {price:.4f} | PnL: {pnl:.2f}% | Setup: {t.get('setup_type','N/A')} | Regime: {t.get('regime','N/A')}")
+            report(f"TRADE CLOSED:\n{t['pair']} {direction} {result} @ {price:.4f}\nPnL: {pnl:.2f}%\nSetup: {t.get('setup_type','N/A')}\nRegime: {t.get('regime','N/A')}")
             update_learning(t["pair"], t["setup_type"], t.get("regime", "UNKNOWN"), result, pnl)
             changed = True
             updated.append(json.dumps(t) + "\n")
@@ -1441,7 +1441,7 @@ def run_scan(cfg):
             continue
         
         setup_names = ", ".join([f"{s['name']}({s['conf']})" for s in analysis.get("all_setups", [])[:3]])
-        log(f"{pair} | {analysis['price']:.4f} | Regime={analysis['regime']} | Trend={analysis['trend']} | Best={analysis['setup']} | Conf={analysis['confidence']}% | Setups=[{setup_names}]")
+        log(f"{pair}\n  Price: {analysis['price']:.4f}\n  Regime: {analysis['regime']}\n  Trend: {analysis['trend']}\n  Best: {analysis['setup']}\n  Conf: {analysis['confidence']}%\n  Setups: [{setup_names}]")
         
         strategy_name = analysis['setup']
         # Strategie-Pause & Pair-Pause — DEAKTIVIERT für Setup-Performance-Test
@@ -1468,11 +1468,11 @@ def run_scan(cfg):
     best_pair_prefs = strat_map.get(best["pair"], {})
     min_conf_for_signal = best_pair_prefs.get("min_confidence", cfg.get("min_confidence", 70))
     if best["confidence"] >= min_conf_for_signal:
-        report(f"SIGNAL: {best['pair']} {best['direction']} | Entry: {best['entry']:.4f} | SL: {best['stop_loss']:.4f} | TP: {best['take_profit']:.4f} | Conf: {best['confidence']}% | Setup: {best['setup_type']} | Regime: {best.get('regime', 'N/A')}")
+        report(f"SIGNAL:\n{best['pair']} {best['direction']}\nEntry: {best['entry']:.4f}\nSL: {best['stop_loss']:.4f}\nTP: {best['take_profit']:.4f}\nConf: {best['confidence']}%\nSetup: {best['setup_type']}\nRegime: {best.get('regime', 'N/A')}")
         if cfg.get("paper_mode"):
             log(f"[PAPER ORDER] {best['direction']} {best['pair']} @ {best['entry']:.4f}")
             log_trade(best)
-            report(f"TRADE OPENED: {best['pair']} {best['direction']} @ {best['entry']:.4f} | SL: {best['stop_loss']:.4f} | TP: {best['take_profit']:.4f} | Setup: {best['setup_type']} | Regime: {best.get('regime', 'N/A')}")
+            report(f"TRADE OPENED:\n{best['pair']} {best['direction']} @ {best['entry']:.4f}\nSL: {best['stop_loss']:.4f}\nTP: {best['take_profit']:.4f}\nSetup: {best['setup_type']}\nRegime: {best.get('regime', 'N/A')}")
         else:
             log("LIVE MODE wäre aktiv - paper_mode=False setzen")
     else:
@@ -1483,7 +1483,7 @@ def run_scan(cfg):
 # ---------------------------------------------------------------------------
 def main():
     cfg = load_config()
-    log(f"v3.0 | Paper={cfg.get('paper_mode')} | Pairs={cfg['pairs']}")
+    log(f"v3.0\nPaper={cfg.get('paper_mode')}\nPairs={cfg['pairs']}")
 
     simulate_outcomes()
 

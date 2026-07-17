@@ -141,7 +141,7 @@ def main():
     remove_from_avoid = [r for r in top if not r["active"]]
 
     lines = []
-    lines.append(f"📊 Hermes Monthly Strategy Report | Letzte {DAYS} Tage | Stand: {now.strftime('%Y-%m-%d %H:%M')} UTC")
+    lines.append(f"📊 Hermes Monthly Strategy Report\nLetzte {DAYS} Tage\nStand: {now.strftime('%Y-%m-%d %H:%M')} UTC")
     lines.append("")
     lines.append(f"Gesamt-Trades im Zeitraum: {len(recent)}")
     lines.append(f"Betrachtete Pair/Strategie-Kombinationen: {len(results)}")
@@ -174,7 +174,7 @@ def main():
         lines.append("")
 
     # Per-Pair Übersicht
-    lines.append("📋 Per Pair | aktive Strategien mit Trades")
+    lines.append("📋 Per Pair\naktive Strategien mit Trades")
     for pair in active_pairs:
         pair_res = [r for r in results if r["pair"] == pair and r["trades"] > 0]
         cfg = strat_map.get(pair, {})

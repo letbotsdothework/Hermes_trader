@@ -247,10 +247,10 @@ def main():
                 else:
                     unrealized = (entry - price) / entry * 100
                 total_unreal += unrealized
-                unreal_str = f" | Unreal: {unrealized:+.2f}%"
+                unreal_str = f"\n  Unreal: {unrealized:+.2f}%"
             else:
-                unreal_str = " | Unreal: N/A"
-            print(f"  {t['pair']} {t['direction']} @ {t['entry']} | Aktuell: {price:.4f}{unreal_str} | SL: {t['stop_loss']} | TP: {t['take_profit']} | {t['setup_type']}")
+                unreal_str = "\n  Unreal: N/A"
+            print(f"  {t['pair']} {t['direction']} @ {t['entry']}\n  Aktuell: {price:.4f}{unreal_str}\n  SL: {t['stop_loss']}\n  TP: {t['take_profit']}\n  {t['setup_type']}")
         print(f"")
         print(f"  📊 Gesamt-Unreal PnL: {total_unreal:+.2f}%")
 
@@ -259,7 +259,7 @@ def main():
         print(f"PER PAIR:")
         for p, s in sorted(pair_stats.items(), key=lambda x: x[1]['pnl'], reverse=True):
             wr_p = round(s["wins"]/(s["wins"]+s["losses"])*100, 1) if (s["wins"]+s["losses"]) else 0
-            print(f"  {p}: {s['wins']}W/{s['losses']}L | WR {wr_p}% | PnL {s['pnl']:+.4f}%")
+            print(f"  {p}: {s['wins']}W/{s['losses']}L\n  WR {wr_p}%\n  PnL {s['pnl']:+.4f}%")
 
     # Lern-Stats
     learn = load_learning()
@@ -269,7 +269,7 @@ def main():
         for key, data in sorted(learn.items(), key=lambda x: x[1].get("pf", 0), reverse=True)[:10]:
             total_t = data.get("wins", 0) + data.get("losses", 0)
             if total_t >= 3:
-                print(f"  {key}: PF={data.get('pf', 0)} | W={data['wins']} L={data['losses']} | Weight={data.get('weight', 1.0)}")
+                print(f"  {key}:\n  PF={data.get('pf', 0)}\n  W={data['wins']} L={data['losses']}\n  Weight={data.get('weight', 1.0)}")
 
 if __name__ == "__main__":
     main()

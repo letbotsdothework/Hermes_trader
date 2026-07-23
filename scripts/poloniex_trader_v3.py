@@ -64,10 +64,11 @@ REGIMES = [
 ]
 
 def load_config():
+    cfg = DEFAULT_CONFIG.copy()
     if os.path.exists(CONFIG_PATH):
         with open(CONFIG_PATH, "r") as f:
-            return json.load(f)
-    return DEFAULT_CONFIG
+            cfg.update(json.load(f))
+    return cfg
 
 def log(msg):
     ts = datetime.datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
@@ -510,8 +511,10 @@ def load_learning():
 
 def save_learning(data):
     os.makedirs(os.path.dirname(LEARN_PATH), exist_ok=True)
-    with open(LEARN_PATH, "w") as f:
+    tmp_path = LEARN_PATH + ".tmp"
+    with open(tmp_path, "w") as f:
         json.dump(data, f, indent=2)
+    os.replace(tmp_path, LEARN_PATH)
 
 def update_learning(pair, strategy, regime, result, pnl_pct):
     """Aktualisiert Performance-Tracking pro Pair/Strategie/Regime"""
@@ -1257,6 +1260,13 @@ def build_trade(analysis, cfg, pair_prefs=None):
 # ---------------------------------------------------------------------------
 # JOURNAL & STATS (aus v2 übernommen)
 # ---------------------------------------------------------------------------
+def _atomic_write_lines(path, lines):
+    """Atomar eine Datei mit Zeilen schreiben (tmp + rename)."""
+    tmp_path = path + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+    os.replace(tmp_path, path)
+
 def log_trade(trade, result=None):
     os.makedirs(os.path.dirname(JOURNAL_PATH), exist_ok=True)
     entry = {**trade, "date": datetime.datetime.now(timezone.utc).strftime("%Y-%m-%d"), "result": result}
@@ -1338,10 +1348,14 @@ def simulate_outcomes():
 
         direction, sl, tp, entry = t["direction"], t["stop_loss"], t["take_profit"], t["entry"]
         result = None; pnl = 0
-        sl_dist = abs(entry - sl)
-        risk_pct = t.get("risk_pct", 1.0)
 
-        entry_time = datetime.datetime.fromisoformat(t["timestamp"])
+        try:
+            entry_time = datetime.datetime.fromisoformat(t["timestamp"])
+            if entry_time.tzinfo is None:
+                entry_time = entry_time.replace(tzinfo=timezone.utc)
+        except Exception:
+            updated.append(line)
+            continue
         age_hours = (datetime.datetime.now(timezone.utc) - entry_time).total_seconds() / 3600
         # Time-Stop: Trade-spezifisch > Pair-Default
         trade_time_stop = t.get("time_stop")
@@ -1386,9 +1400,7 @@ def simulate_outcomes():
             updated.append(line)
 
     if changed:
-        with open(JOURNAL_PATH, "w") as f:
-            f.writelines(updated)
-
+        _atomic_write_lines(JOURNAL_PATH, updated)
 # ---------------------------------------------------------------------------
 # HAUPTSCANNER v3
 # ---------------------------------------------------------------------------

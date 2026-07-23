@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
+"""Tagesreport für Hermes Trader v3 — READ-ONLY.
+
+Schließt KEINE Trades und schreibt NICHT ins Journal oder Learning-File.
+Das Schließen von Trades ist ausschließlich Aufgabe von poloniex_trader_v3.py.
+"""
 import json
 import os
 import datetime
 from datetime import timezone
 import urllib.request
 
-JOURNAL_PATH = "/opt/data/.hermes_trader/journal/trades_v3.jsonl"
-LEARN_PATH = "/opt/data/.hermes_trader/journal/learning_v3.json"
-LOG_PATH = "/opt/data/.hermes_trader/logs/agent_v3.log"
+JOURNAL_PATH = os.path.expanduser("~/.hermes_trader/journal/trades_v3.jsonl")
+LEARN_PATH = os.path.expanduser("~/.hermes_trader/journal/learning_v3.json")
 BASE_URL = "https://api.poloniex.com"
+
 
 def api_get(endpoint):
     url = BASE_URL + endpoint
@@ -19,161 +24,48 @@ def api_get(endpoint):
     except Exception as e:
         return {"error": str(e)}
 
+
 def get_ticker(symbol):
     return api_get(f"/markets/{symbol}/price")
 
+
 def load_learning():
     if os.path.exists(LEARN_PATH):
-        with open(LEARN_PATH, "r") as f:
-            return json.load(f)
+        try:
+            with open(LEARN_PATH, "r") as f:
+                return json.load(f)
+        except Exception:
+            return {}
     return {}
 
-def save_learning(data):
-    os.makedirs(os.path.dirname(LEARN_PATH), exist_ok=True)
-    with open(LEARN_PATH, "w") as f:
-        json.dump(data, f, indent=2)
 
 def is_win(t):
-    """TIME_STOP mit positivem PnL zählt als Gewinn."""
-    result = t.get("result", "")
-    pnl = t.get("pnl_pct", 0)
-    return result == "WIN" or (result == "TIME_STOP" and pnl > 0)
+    """Gleiche Definition wie der Bot (update_learning): nur result == WIN zählt als Win."""
+    return t.get("result", "") == "WIN"
+
 
 def is_loss(t):
-    """TIME_STOP mit negativem PnL zählt als Verlust."""
-    result = t.get("result", "")
-    pnl = t.get("pnl_pct", 0)
-    return result == "LOSS" or (result == "TIME_STOP" and pnl <= 0)
+    """Alles andere (LOSS, TIME_STOP egal welchen PnL) zählt als Verlust — wie im Bot."""
+    return t.get("result", "") in ("LOSS", "TIME_STOP")
 
-def update_learning(pair, strategy, result, pnl_pct):
-    learn = load_learning()
-    key = f"{pair}:{strategy}"
-    if key not in learn:
-        learn[key] = {"wins": 0, "losses": 0, "total_pnl": 0, "gross_profit": 0, "gross_loss": 0, "pf": 0, "weight": 1.0}
-    entry = learn[key]
-    if "gross_profit" not in entry:
-        entry["gross_profit"] = 0
-    if "gross_loss" not in entry:
-        entry["gross_loss"] = 0
-    if result == "WIN":
-        entry["wins"] += 1
-        entry["gross_profit"] += pnl_pct
-    else:
-        entry["losses"] += 1
-        entry["gross_loss"] += abs(pnl_pct)
-    entry["total_pnl"] += pnl_pct
-    if entry["gross_loss"] > 0:
-        entry["pf"] = round(entry["gross_profit"] / entry["gross_loss"], 2)
-    else:
-        entry["pf"] = float(entry["gross_profit"]) if entry["gross_profit"] > 0 else 0.0
-    total = entry["wins"] + entry["losses"]
-    if total >= 5:
-        if entry["pf"] < 1.0:
-            entry["weight"] = max(0.1, entry["weight"] * 0.8)
-        elif entry["pf"] > 1.5:
-            entry["weight"] = min(2.0, entry["weight"] * 1.1)
-    save_learning(learn)
-
-def log(msg):
-    ts = datetime.datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-    line = f"[{ts} UTC] {msg}"
-    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
-    with open(LOG_PATH, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
-
-def simulate_and_close():
-    """Prüft alle offenen Trades gegen aktuelle Preise und schließt sie bei SL/TP"""
-    if not os.path.exists(JOURNAL_PATH):
-        return 0, 0, 0.0
-
-    with open(JOURNAL_PATH, "r") as f:
-        lines = f.readlines()
-
-    updated = []
-    closed_count = 0
-    wins = 0
-    losses = 0
-    total_pnl = 0.0
-
-    for line in lines:
-        try:
-            t = json.loads(line)
-        except:
-            updated.append(line)
-            continue
-
-        if t.get("status") != "OPEN":
-            updated.append(line)
-            continue
-
-        tk = get_ticker(t["pair"])
-        if "error" in tk:
-            updated.append(line)
-            continue
-
-        price = float(tk.get("price", 0))
-        if price == 0:
-            updated.append(line)
-            continue
-
-        direction, sl, tp, entry = t["direction"], float(t["stop_loss"]), float(t["take_profit"]), float(t["entry"])
-        result = None
-        pnl = 0.0
-
-        if direction == "LONG":
-            if price <= sl:
-                result, pnl = "LOSS", (sl - entry) / entry * 100
-            elif price >= tp:
-                result, pnl = "WIN", (tp - entry) / entry * 100
-        else:
-            if price >= sl:
-                result, pnl = "LOSS", (entry - sl) / entry * 100
-            elif price <= tp:
-                result, pnl = "WIN", (entry - tp) / entry * 100
-
-        if result:
-            t["status"] = "CLOSED"
-            t["result"] = result
-            t["exit_price"] = price
-            t["pnl_pct"] = round(pnl, 4)
-            t["close_time"] = datetime.datetime.now(timezone.utc).isoformat()
-            log(f"[REPORT CLOSE] {t['pair']} {direction} {result} @ {price:.4f} PnL={pnl:.2f}%")
-            update_learning(t["pair"], t["setup_type"], result, pnl)
-            updated.append(json.dumps(t) + "\n")
-            closed_count += 1
-            total_pnl += pnl
-            if result == "WIN":
-                wins += 1
-            else:
-                losses += 1
-        else:
-            updated.append(line)
-
-    if closed_count > 0:
-        with open(JOURNAL_PATH, "w") as f:
-            f.writelines(updated)
-
-    return wins, losses, total_pnl
 
 def _parse_close_time(t):
     ct = t.get("close_time")
     if ct:
         try:
-            return datetime.datetime.fromisoformat(ct.replace("Z", "+00:00"))
+            dt = datetime.datetime.fromisoformat(ct.replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt
         except Exception:
             return None
     return None
+
 
 def main():
     now = datetime.datetime.now(timezone.utc)
     today = now.strftime("%Y-%m-%d")
     last_report = now - datetime.timedelta(hours=24)
-
-    # 1. ERST offene Trades prüfen und schließen
-    closed_wins, closed_losses, closed_pnl = simulate_and_close()
-    if closed_wins or closed_losses:
-        print(f"🔍 Pre-Check: {closed_wins} WIN / {closed_losses} LOSS geschlossen (PnL: {closed_pnl:+.4f}%)")
-        print("")
 
     if not os.path.exists(JOURNAL_PATH):
         print(f"📊 TAGESREPORT {today}")
@@ -185,7 +77,7 @@ def main():
         for line in f:
             try:
                 trades.append(json.loads(line))
-            except:
+            except Exception:
                 pass
 
     # "HEUTE" = seit letztem Report (letzte 24h), nicht Kalendertag
@@ -201,7 +93,7 @@ def main():
     total_losses = [t for t in all_closed if is_loss(t)]
     total_pnl = sum(t.get("pnl_pct", 0) for t in all_closed)
     total = len(total_wins) + len(total_losses)
-    wr = round(len(total_wins)/total*100, 1) if total else 0
+    wr = round(len(total_wins) / total * 100, 1) if total else 0
 
     # Pair-Stats
     pair_stats = {}
@@ -257,11 +149,11 @@ def main():
     if pair_stats:
         print(f"")
         print(f"PER PAIR:")
-        for p, s in sorted(pair_stats.items(), key=lambda x: x[1]['pnl'], reverse=True):
-            wr_p = round(s["wins"]/(s["wins"]+s["losses"])*100, 1) if (s["wins"]+s["losses"]) else 0
+        for p, s in sorted(pair_stats.items(), key=lambda x: x[1]["pnl"], reverse=True):
+            wr_p = round(s["wins"] / (s["wins"] + s["losses"]) * 100, 1) if (s["wins"] + s["losses"]) else 0
             print(f"  {p}: {s['wins']}W/{s['losses']}L\n  WR {wr_p}%\n  PnL {s['pnl']:+.4f}%")
 
-    # Lern-Stats
+    # Lern-Stats (nur Anzeige, kein Schreiben)
     learn = load_learning()
     if learn:
         print(f"")
@@ -270,6 +162,7 @@ def main():
             total_t = data.get("wins", 0) + data.get("losses", 0)
             if total_t >= 3:
                 print(f"  {key}:\n  PF={data.get('pf', 0)}\n  W={data['wins']} L={data['losses']}\n  Weight={data.get('weight', 1.0)}")
+
 
 if __name__ == "__main__":
     main()

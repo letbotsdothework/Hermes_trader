@@ -100,7 +100,8 @@ def main():
     trades = load_trades()
     strat_map = load_strategy_map()
 
-    recent = [t for t in trades if parse_ts(t.get("timestamp") or t.get("entry_time")) >= cutoff_ms]
+    # Nur geschlossene Trades werten — offene haben keinen finalen PnL
+    recent = [t for t in trades if t.get("status") == "CLOSED" and parse_ts(t.get("timestamp") or t.get("entry_time")) >= cutoff_ms]
 
     # Gruppieren nach (pair, strategy)
     groups = {}

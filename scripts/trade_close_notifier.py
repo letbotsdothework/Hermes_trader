@@ -8,15 +8,39 @@ import json
 import os
 from datetime import datetime, timezone, timedelta
 
-JOURNAL_PATH = "/opt/data/.hermes_trader/journal/trades_v3.jsonl"
-LOOKBACK_MINUTES = 18  # etwas mehr als 15min Intervall, um Lücken zu vermeiden
+JOURNAL_PATH = os.path.expanduser("~/.hermes_trader/journal/trades_v3.jsonl")
+STATE_PATH = os.path.expanduser("~/.hermes_trader/journal/.close_notifier_state")
+LOOKBACK_MINUTES = 15  # Cron-Intervall; Watermark verhindert Duplikate
+
+def _load_watermark():
+    """Letzter gemeldeter close_time-Zeitpunkt (ISO). None beim ersten Lauf."""
+    try:
+        with open(STATE_PATH, "r", encoding="utf-8") as f:
+            raw = f.read().strip()
+            if raw:
+                dt = datetime.fromisoformat(raw)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt
+    except Exception:
+        pass
+    return None
+
+def _save_watermark(dt):
+    tmp = STATE_PATH + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(dt.isoformat())
+    os.replace(tmp, STATE_PATH)
 
 def main():
     if not os.path.exists(JOURNAL_PATH):
         return
 
-    cutoff = datetime.now(timezone.utc) - timedelta(minutes=LOOKBACK_MINUTES)
+    watermark = _load_watermark()
+    # Beim allerersten Lauf nur das Lookback-Fenster melden (keine History-Flut)
+    cutoff = watermark or (datetime.now(timezone.utc) - timedelta(minutes=LOOKBACK_MINUTES))
     closed_trades = []
+    max_seen = watermark
 
     with open(JOURNAL_PATH, "r", encoding="utf-8") as f:
         for line in f:
@@ -33,10 +57,15 @@ def main():
                 ts = datetime.fromisoformat(t["close_time"])
                 if ts.tzinfo is None:
                     ts = ts.replace(tzinfo=timezone.utc)
-                if ts >= cutoff:
+                if ts > cutoff:
                     closed_trades.append(t)
+                    if max_seen is None or ts > max_seen:
+                        max_seen = ts
             except Exception:
                 continue
+
+    if max_seen is not None and max_seen != watermark:
+        _save_watermark(max_seen)
 
     if not closed_trades:
         return  # silent wenn nichts passiert ist (kein "Kein Setup" nötig, ist ja Backup)
